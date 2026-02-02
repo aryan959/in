@@ -17,7 +17,6 @@ body{
   min-height:100vh;
   overflow:hidden;
 }
-
 .card{
   background:#ffffffdd;
   padding:28px;
@@ -26,7 +25,6 @@ body{
   text-align:center;
   box-shadow:0 18px 60px rgba(0,0,0,.15);
 }
-
 button{
   padding:12px 18px;
   margin:6px;
@@ -35,23 +33,19 @@ button{
   cursor:pointer;
   font-weight:700;
 }
-
 .option{background:#eee}
 .option:hover{background:#ddd}
-
 .memory{
-  max-width:200px;
+  max-width:190px;
   border-radius:14px;
-  margin:14px auto;
+  margin:12px auto;
   display:block;
 }
-
 .zone{
   position:relative;
   height:160px;
   display:none;
 }
-
 #yesBtn{
   background:#ff3b7a;
   color:white;
@@ -60,7 +54,6 @@ button{
   top:50%;
   transform:translateY(-50%);
 }
-
 #noBtn{
   background:#e5e7eb;
   position:absolute;
@@ -69,21 +62,17 @@ button{
   transform:translateY(-50%);
   transition:.15s;
 }
-
 .score{font-weight:800;margin-bottom:10px}
 .result{display:none;margin-top:20px}
-
 canvas{
   position:fixed;
   inset:0;
   pointer-events:none;
 }
-
 .heart{
   position:fixed;
   animation:float 6s linear infinite;
 }
-
 @keyframes float{
   from{transform:translateY(100vh);opacity:0}
   to{transform:translateY(-10vh);opacity:1}
@@ -116,7 +105,6 @@ canvas{
     <button id="yesBtn">YES 💕</button>
     <button id="noBtn">No</button>
   </div>
-
   <div class="result" id="result">
     <h2>You just made my whole year better 💕</h2>
     <img src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif" width="230">
@@ -128,20 +116,6 @@ canvas{
 <audio id="music" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8f9a6a4c7.mp3"></audio>
 
 <script>
-// unlock audio
-document.addEventListener("click",()=>music.play().catch(()=>{}),{once:true});
-
-// floating hearts
-setInterval(()=>{
-  const h=document.createElement("div");
-  h.innerText="💖";
-  h.className="heart";
-  h.style.left=Math.random()*100+"vw";
-  h.style.fontSize=(16+Math.random()*20)+"px";
-  document.body.appendChild(h);
-  setTimeout(()=>h.remove(),6000);
-},300);
-
 // elements
 const quizSection=document.getElementById("quizSection");
 const scoreScreen=document.getElementById("scoreScreen");
@@ -157,6 +131,22 @@ const noBtn=document.getElementById("noBtn");
 const zone=document.getElementById("zone");
 const result=document.getElementById("result");
 const music=document.getElementById("music");
+
+// unlock audio (GitHub safe)
+document.addEventListener("click",()=>{
+  music.play().catch(()=>{});
+},{once:true});
+
+// floating hearts
+setInterval(()=>{
+  const h=document.createElement("div");
+  h.innerText="💖";
+  h.className="heart";
+  h.style.left=Math.random()*100+"vw";
+  h.style.fontSize=(16+Math.random()*20)+"px";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),6000);
+},300);
 
 // QUESTIONS
 const questions=[
@@ -187,14 +177,12 @@ function loadQuestion(){
   question.innerText=q.q;
   options.innerHTML="";
   imageHolder.innerHTML="";
-
   if(q.img){
     const im=new Image();
     im.src=q.img;
     im.className="memory";
     imageHolder.appendChild(im);
   }
-
   q.a.forEach(ans=>{
     const b=document.createElement("button");
     b.className="option";
@@ -208,17 +196,15 @@ function loadQuestion(){
     options.appendChild(b);
   });
 }
-
 loadQuestion();
 
 function showScore(){
   quizSection.style.display="none";
   scoreScreen.style.display="block";
-
   scoreMsg.innerText =
-    score>=2 ? You know us too well 🥹 +${score} :
-    score>=0 ? Not bad… still cute 😌 Score: ${score} :
-    Negative score?? ${score};
+    score>=2 ? `You know us too well 🥹 +${score}` :
+    score>=0 ? `Not bad… still cute 😌 Score: ${score}` :
+    `Negative score?? 🤨 ${score}`;
 }
 
 continueBtn.onclick=()=>{
@@ -228,7 +214,10 @@ continueBtn.onclick=()=>{
 };
 
 // confetti
-const confettiInstance=confetti.create(document.getElementById("confetti"),{resize:true});
+const confettiInstance=confetti.create(
+  document.getElementById("confetti"),
+  {resize:true}
+);
 function blast(){
   confettiInstance({particleCount:350,spread:140});
 }
@@ -239,7 +228,8 @@ zone.addEventListener("pointermove",()=>{
   scale=Math.max(scale*0.9,0.4);
   noBtn.style.left=Math.random()*70+"%";
   noBtn.style.top=Math.random()*70+"%";
-  noBtn.style.transform=translateY(-50%) scale(${scale}) rotate(${Math.random()*20-10}deg);
+  noBtn.style.transform=
+    `translateY(-50%) scale(${scale}) rotate(${Math.random()*20-10}deg)`;
 });
 
 // YES
