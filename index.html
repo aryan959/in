@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Siya Valentine Quiz 💖</title>
+<title>Valentine Quiz 💖</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
@@ -17,6 +17,7 @@ body{
   min-height:100vh;
   overflow:hidden;
 }
+
 .card{
   background:#ffffffdd;
   padding:28px;
@@ -25,6 +26,7 @@ body{
   text-align:center;
   box-shadow:0 18px 60px rgba(0,0,0,.15);
 }
+
 button{
   padding:12px 18px;
   margin:6px;
@@ -33,18 +35,64 @@ button{
   cursor:pointer;
   font-weight:700;
 }
+
 .option{background:#eee}
 .option:hover{background:#ddd}
-#yesBtn{background:#ff3b7a;color:white;position:absolute}
-#noBtn{background:#e5e7eb;position:absolute}
-.zone{position:relative;height:140px;display:none}
-.memory{width:220px;border-radius:14px;margin:12px auto}
-.result{display:none;font-size:26px;font-weight:700;margin-top:20px}
-canvas{position:fixed;inset:0;pointer-events:none}
-.heart{position:fixed;animation:float 6s linear infinite}
+
+.memory{
+  max-width:190px;
+  border-radius:14px;
+  margin:12px auto;
+  display:block;
+}
+
+.zone{
+  position:relative;
+  height:160px;
+  display:none;
+}
+
+#yesBtn{
+  background:#ff3b7a;
+  color:white;
+  position:absolute;
+  left:20%;
+  top:50%;
+  transform:translateY(-50%);
+}
+
+#noBtn{
+  background:#e5e7eb;
+  position:absolute;
+  left:60%;
+  top:50%;
+  transform:translateY(-50%);
+  transition:.15s;
+}
+
+.score{
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.result{
+  display:none;
+  margin-top:20px;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+
+.heart{
+  position:fixed;
+  animation:float 6s linear infinite;
+}
 @keyframes float{
-from{transform:translateY(100vh);opacity:0}
-to{transform:translateY(-10vh);opacity:1}
+  from{transform:translateY(100vh);opacity:0}
+  to{transform:translateY(-10vh);opacity:1}
 }
 </style>
 </head>
@@ -55,20 +103,34 @@ to{transform:translateY(-10vh);opacity:1}
 
 <main class="card">
 
-<div id="quiz">
-<h1>Mini Love Quiz 😏</h1>
-<p id="question"></p>
-<div id="imageHolder"></div>
-<div id="options"></div>
+<!-- QUIZ -->
+<div id="quizSection">
+  <h1>Mini Love Quiz 😏</h1>
+  <div class="score">Score: <span id="score">0</span></div>
+  <p id="question"></p>
+  <div id="imageHolder"></div>
+  <div id="options"></div>
 </div>
 
-<div id="proposal" style="display:none;">
-<h1>Siya will you be my valentine? 💖</h1>
-<div class="zone" id="zone">
-<button id="yesBtn">YES</button>
-<button id="noBtn">NO</button>
+<!-- FINAL SCORE SCREEN -->
+<div id="scoreScreen" style="display:none;">
+  <h2 id="scoreMsg"></h2>
+  <button id="continueBtn">Continue ➜</button>
 </div>
-<div class="result" id="result"></div>
+
+<!-- PROPOSAL -->
+<div id="proposalSection" style="display:none;">
+  <h1>my little baby will you be my valentine? 💖</h1>
+
+  <div class="zone" id="zone">
+    <button id="yesBtn">YES 💕</button>
+    <button id="noBtn">No</button>
+  </div>
+
+  <div class="result" id="result">
+    <h2>You just made my whole year better 💕</h2>
+    <img src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif" width="230">
+  </div>
 </div>
 
 </main>
@@ -79,89 +141,147 @@ to{transform:translateY(-10vh);opacity:1}
 
 /* floating hearts */
 setInterval(()=>{
-const h=document.createElement("div");
-h.innerText="💖";
-h.className="heart";
-h.style.left=Math.random()*100+"vw";
-h.style.fontSize=(16+Math.random()*20)+"px";
-document.body.appendChild(h);
-setTimeout(()=>h.remove(),6000);
+  const h=document.createElement("div");
+  h.innerText="💖";
+  h.className="heart";
+  h.style.left=Math.random()*100+"vw";
+  h.style.fontSize=(16+Math.random()*20)+"px";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),6000);
 },300);
 
-/* QUIZ */
+
+/* elements */
+const quizSection=document.getElementById("quizSection");
+const scoreScreen=document.getElementById("scoreScreen");
+const proposalSection=document.getElementById("proposalSection");
+
+const question=document.getElementById("question");
+const options=document.getElementById("options");
+const imageHolder=document.getElementById("imageHolder");
+const scoreEl=document.getElementById("score");
+const scoreMsg=document.getElementById("scoreMsg");
+const continueBtn=document.getElementById("continueBtn");
+
+const yesBtn=document.getElementById("yesBtn");
+const noBtn=document.getElementById("noBtn");
+const zone=document.getElementById("zone");
+const result=document.getElementById("result");
+
+const music=document.getElementById("music");
+
+
+/* questions */
 const questions=[
 {
-q:"What is our dream destination?",
-img:null,
-correct:"France",
-a:["France","Bali","Goa","Tokyo"]
+  q:"What is our dream destination?",
+  img:null,
+  correct:"France",
+  a:["France","Bali","Goa","Tokyo"]
 },
 {
-q:"This is a very old pic of us… guess the event",
-img:"https://uploads.onecompiler.io/44cekzrdr/44cejsxnr/WhatsApp%20Image%202026-02-02%20at%207.51.24%20PM.jpeg",
-correct:"My birthday",
-a:["Trip","Anniversary","My birthday","Random day"]
+  q:"This is a very old pic of us… guess the event",
+  img:"https://uploads.onecompiler.io/44cekzrdr/44cejsxnr/WhatsApp%20Image%202026-02-02%20at%207.51.24%20PM.jpeg",
+  correct:"My birthday",
+  a:["Trip","Anniversary","My birthday","Random day"]
 },
 {
-q:"Who gets more dramatic during fights?",
-img:null,
-correct:"Both equally",
-a:["You","Me","Both equally","No one"]
+  q:"Perfect date night?",
+  img:null,
+  correct:"Anywhere together",
+  a:["Movie","Cafe","Shopping","Anywhere together"]
 }
 ];
 
 let i=0;
-const qEl=document.getElementById("question");
-const optEl=document.getElementById("options");
-const imgHolder=document.getElementById("imageHolder");
+let score=0;
 
-function loadQ(){
-const q=questions[i];
-qEl.innerText=q.q;
-optEl.innerHTML="";
-imgHolder.innerHTML="";
+function loadQuestion(){
+  const q=questions[i];
+  question.innerText=q.q;
+  options.innerHTML="";
+  imageHolder.innerHTML="";
 
-if(q.img){
-const im=document.createElement("img");
-im.src=q.img;
-im.className="memory";
-imgHolder.appendChild(im);
+  if(q.img){
+    const im=new Image();
+    im.src=q.img;
+    im.className="memory";
+    imageHolder.appendChild(im);
+  }
+
+  q.a.forEach(ans=>{
+    const b=document.createElement("button");
+    b.className="option";
+    b.innerText=ans;
+
+    b.onclick=()=>{
+      if(ans===q.correct){
+        score++;
+      } else {
+        score--;
+      }
+
+      scoreEl.innerText=score;
+
+      i++;
+      if(i<questions.length){
+        loadQuestion();
+      } else {
+        showScore();
+      }
+    };
+
+    options.appendChild(b);
+  });
 }
 
-q.a.forEach(ans=>{
-const b=document.createElement("button");
-b.className="option";
-b.innerText=ans;
-b.onclick=()=>{
-if(ans===q.correct){
-i++;
-if(i<questions.length) loadQ();
-else startProposal();
+loadQuestion();
+
+
+/* show score screen */
+function showScore(){
+  quizSection.style.display="none";
+  scoreScreen.style.display="block";
+
+  if(score>=2){
+    scoreMsg.innerText="You know us too well 🥹 +"+score+" points";
+  } else if(score>=0){
+    scoreMsg.innerText="Not bad… still cute though 😌 Score: "+score;
+  } else {
+    scoreMsg.innerText="Negative score?? suspicious 🤨 Score: "+score;
+  }
 }
+
+continueBtn.onclick=()=>{
+  scoreScreen.style.display="none";
+  proposalSection.style.display="block";
+  zone.style.display="block";
 };
-optEl.appendChild(b);
-});
-}
 
-loadQ();
-
-function startProposal(){
-document.getElementById("quiz").style.display="none";
-document.getElementById("proposal").style.display="block";
-document.getElementById("zone").style.display="block";
-}
 
 /* confetti */
 const confettiInstance=confetti.create(document.getElementById("confetti"),{resize:true});
-function blast(){confettiInstance({particleCount:300,spread:130,origin:{y:.6}});}
+function blast(){confettiInstance({particleCount:350,spread:140});}
 
-document.getElementById("yesBtn").onclick=()=>{
-document.getElementById("zone").style.display="none";
-document.getElementById("result").style.display="block";
-document.getElementById("result").innerText="You just made my whole year better 💕";
-document.getElementById("music").play();
-blast();
+
+/* no button chaos */
+let scale=1;
+zone.addEventListener("pointermove",()=>{
+  scale*=0.9;
+  noBtn.style.left=Math.random()*70+"%";
+  noBtn.style.top=Math.random()*70+"%";
+  noBtn.style.transform=translateY(-50%) scale(${scale});
+});
+
+
+/* yes click */
+yesBtn.onclick=()=>{
+  zone.style.display="none";
+  result.style.display="block";
+  music.play();
+  blast();
 };
+
 </script>
 
 </body>
