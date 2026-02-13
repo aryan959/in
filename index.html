@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For You bubu ❤️</title>
+<title>For You bubuda❤️</title>
 
 <style>
 body {
@@ -27,13 +27,11 @@ body {
 h1 {
   font-size: 55px;
   color: #ff4d6d;
-  letter-spacing: 3px;
 }
 
 p {
   font-size: 22px;
   opacity: 0.9;
-  line-height: 1.6;
 }
 
 button {
@@ -58,6 +56,23 @@ button:hover {
   from {opacity: 0; transform: translateY(40px);}
   to {opacity: 1; transform: translateY(0);}
 }
+
+.heart {
+  position: absolute;
+  color: #ff4d6d;
+  animation: floatUp 2s ease-out forwards;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-200px) scale(2);
+  }
+}
 </style>
 </head>
 
@@ -65,16 +80,43 @@ button:hover {
 
 <div class="container">
   <h1>I Want You Back…bubu plzzzzzz bacheeee</h1>
-  <p>I know I made mistakes.plzzz perr kuch chizzo pa vishkar meri jaan tu mera bubu ni hai</p>
-  <p>my heart still burns only for you merko hi ptah 1min bhi akele yahpe kaise niklra hai .</p>
+  <p>I know I made mistakes.plzzz perr kuch chizzo pa vishkar meri jaan tu mera bubu ni hai.</p>
+  <p>my heart still burns only for you merko hi ptah 1min bhi akele yahpe kaise niklra hai.</p>
   <p>This Valentine’s… let me hold you again bubu💟.</p>
-
-  <button onclick="goNext()">Come To Me mera bubu ❤️</button>
+  <button onclick="explodeHearts()">Come To Me ❤️</button>
 </div>
 
+<!-- 🎵 Sound Effect -->
+<audio id="loveSound" src="love.mp3"></audio>
+
 <script>
-function goNext() {
-  window.location.href = "love.html";
+function explodeHearts() {
+
+  // 🔊 Play Sound
+  const sound = document.getElementById("loveSound");
+  sound.play();
+
+  // 💥 Create 70 hearts
+  for (let i = 0; i < 70; i++) {
+    let heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤️";
+
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.top = Math.random() * 100 + "vh";
+    heart.style.fontSize = (Math.random() * 25 + 20) + "px";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+      heart.remove();
+    }, 2000);
+  }
+
+  // 🎬 After explosion → go to next page
+  setTimeout(() => {
+    window.location.href = "love.html";
+  }, 2500);
 }
 </script>
 
