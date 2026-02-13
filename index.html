@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For Bubu 💖</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
@@ -21,20 +21,21 @@ body{
   color:white;
 }
 
-/* Golden moving particles */
+/* Soft floating warm light */
 body::before{
   content:"";
   position:fixed;
   inset:0;
-  background-image:radial-gradient(#d4af37 1px,transparent 1px);
-  background-size:40px 40px;
-  opacity:.08;
-  animation:moveBg 25s linear infinite;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(212,175,55,.15), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(255,215,150,.12), transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.05), transparent 60%);
+  animation:slowMove 20s ease-in-out infinite alternate;
 }
 
-@keyframes moveBg{
-  from{background-position:0 0}
-  to{background-position:0 400px}
+@keyframes slowMove{
+  from{transform:translateY(-20px);}
+  to{transform:translateY(20px);}
 }
 
 .card{
@@ -43,15 +44,19 @@ body::before{
   border:1px solid rgba(255,255,255,.15);
   padding:45px;
   border-radius:30px;
-  width:min(720px,92vw);
+  width:min(750px,92vw);
   text-align:center;
   box-shadow:0 0 60px rgba(212,175,55,.25);
-  animation:fadeIn 1.2s ease;
+  opacity:0;
+  transform:translateY(20px);
+  animation:softFade 1.8s ease forwards;
 }
 
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1;transform:translateY(0)}
+@keyframes softFade{
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
 
 h1{
@@ -61,7 +66,6 @@ h1{
   background:linear-gradient(90deg,#d4af37,#fff5c2,#d4af37);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-  margin-bottom:10px;
 }
 
 #loveCounter{
@@ -73,26 +77,55 @@ h1{
 #counterTime{
   margin-top:10px;
   font-weight:600;
+  animation:heartbeat 3s ease-in-out infinite;
+}
+
+@keyframes heartbeat{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.05);}
+}
+
+/* Slideshow */
+.slideshow{
+  margin-top:30px;
+  height:280px;
+  position:relative;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 0 40px rgba(212,175,55,.25);
+}
+
+.slideshow::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top, rgba(0,0,0,.5), rgba(0,0,0,.1));
+}
+
+.slideshow img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  position:absolute;
+  opacity:0;
+  transform:scale(1);
+  transition:opacity 2s ease-in-out, transform 6s ease;
 }
 
 button{
   padding:14px 26px;
-  margin-top:25px;
+  margin-top:30px;
   border:none;
   border-radius:999px;
   cursor:pointer;
   font-weight:700;
   font-size:15px;
   transition:.3s;
-}
-
-#celebrateBtn{
   background:linear-gradient(90deg,#d4af37,#fff5c2,#d4af37);
   color:black;
-  letter-spacing:.5px;
 }
 
-#celebrateBtn:hover{
+button:hover{
   transform:scale(1.07);
   box-shadow:0 0 25px #d4af37;
 }
@@ -100,7 +133,7 @@ button{
 .result{
   margin-top:30px;
   display:none;
-  animation:fadeIn 1s ease;
+  animation:softFade 1s ease forwards;
 }
 
 canvas{
@@ -124,6 +157,11 @@ canvas{
     <h2 id="counterTime"></h2>
   </div>
 
+  <!-- Slideshow -->
+  <div class="slideshow">
+    <img id="slideImage">
+  </div>
+
   <p id="typeText" style="margin-top:25px;font-size:18px;opacity:.9;"></p>
 
   <button id="celebrateBtn">Forever With You ✨</button>
@@ -138,47 +176,10 @@ canvas{
 </main>
 
 <script>
-const celebrateBtn = document.getElementById("celebrateBtn");
-const result = document.getElementById("result");
-
-// 🎉 Confetti setup
-const confettiInstance = confetti.create(
-  document.getElementById("confetti"),
-  {resize:true}
-);
-
-function blast(){
-  confettiInstance({
-    particleCount:300,
-    spread:140,
-    origin:{y:0.6}
-  });
-}
-
-// 💖 TYPEWRITER MESSAGE
-const text =
-"Happy Valentine’s Day, Bubu. " +
-"In a world full of temporary things, " +
-"you are my forever. " +
-"I choose you. Today. Tomorrow. Always. 💖";
-
-let index = 0;
-const typeEl = document.getElementById("typeText");
-
-function typeWriter(){
-  if(index < text.length){
-    typeEl.innerHTML += text.charAt(index);
-    index++;
-    setTimeout(typeWriter, 40);
-  }
-}
-
-typeWriter();
-
-// 💖 LOVE COUNTER
-// 🔥 CHANGE THIS DATE TO YOUR REAL DATE
+// 💖 CHANGE THIS TO YOUR REAL DATE
 const startDate = new Date("2024-07-15T00:00:00");
 
+// Counter
 const counterEl = document.getElementById("counterTime");
 
 function updateCounter(){
@@ -200,12 +201,59 @@ function updateCounter(){
 setInterval(updateCounter,1000);
 updateCounter();
 
-// 💎 Button Action
-celebrateBtn.onclick = () => {
-  result.style.display = "block";
-  blast();
-  setTimeout(blast,600);
-  setTimeout(blast,1200);
+// 💖 Slideshow (photos must be in same folder)
+const photos = [
+  "photo1.jpg",
+  "photo2.jpg",
+  "photo3.jpg",
+  "photo4.jpg"
+];
+
+const slideImage = document.getElementById("slideImage");
+let slideIndex = 0;
+
+function showSlide(){
+  slideImage.style.opacity = 0;
+
+  setTimeout(()=>{
+    slideImage.src = photos[slideIndex];
+    slideImage.style.transform = "scale(1.08)";
+    slideImage.style.opacity = 1;
+    slideIndex = (slideIndex + 1) % photos.length;
+  },800);
+}
+
+showSlide();
+setInterval(showSlide,6000);
+
+// 💖 Typewriter
+const text =
+"Happy Valentine’s Day, Bubu. " +
+"In a world full of temporary things, " +
+"you are my forever. " +
+"I choose you. Today. Tomorrow. Always. 💖";
+
+let index = 0;
+const typeEl = document.getElementById("typeText");
+
+function typeWriter(){
+  if(index < text.length){
+    typeEl.innerHTML += text.charAt(index);
+    index++;
+    setTimeout(typeWriter, 40);
+  }
+}
+typeWriter();
+
+// 🎉 Confetti
+const confettiInstance = confetti.create(
+  document.getElementById("confetti"),
+  {resize:true}
+);
+
+document.getElementById("celebrateBtn").onclick = () => {
+  document.getElementById("result").style.display = "block";
+  confettiInstance({particleCount:300,spread:140,origin:{y:0.6}});
 };
 </script>
 
